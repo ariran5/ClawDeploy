@@ -57,7 +57,7 @@ const stats: Array<{ key: keyof DashboardData; label: string; color: string }> =
         <ol class="space-y-3 text-sm text-gray-600">
           <li class="flex gap-3">
             <span class="flex-shrink-0 w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-xs font-bold">1</span>
-            <span>Add your VPS server (Timeweb or other)</span>
+            <span>Add your VPS server</span>
           </li>
           <li class="flex gap-3">
             <span class="flex-shrink-0 w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-xs font-bold">2</span>

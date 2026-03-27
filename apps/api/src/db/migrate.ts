@@ -61,7 +61,7 @@ export async function runMigrations() {
       encrypted_credential VARCHAR(4096) NOT NULL,
       status vps_status NOT NULL DEFAULT 'pending',
       last_health_check TIMESTAMP,
-      provider VARCHAR(64) DEFAULT 'timeweb',
+      provider VARCHAR(64) DEFAULT 'other',
       created_at TIMESTAMP NOT NULL DEFAULT now(),
       updated_at TIMESTAMP NOT NULL DEFAULT now()
     )

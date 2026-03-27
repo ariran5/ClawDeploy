@@ -20,7 +20,7 @@ export const vpsServers = pgTable('vps_servers', {
   encryptedCredential: varchar('encrypted_credential', { length: 4096 }).notNull(),
   status: vpsStatusEnum('status').default('pending').notNull(),
   lastHealthCheck: timestamp('last_health_check'),
-  provider: varchar('provider', { length: 64 }).default('timeweb'),
+  provider: varchar('provider', { length: 64 }).default('other'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

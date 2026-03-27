@@ -7,7 +7,7 @@ export const createVpsSchema = z.object({
   username: z.string().min(1, 'Username is required').max(128),
   authMethod: z.enum(['password', 'key']),
   credential: z.string().min(1, 'Credential is required'),
-  provider: z.string().max(64).default('timeweb'),
+  provider: z.string().max(64).default('other'),
 });
 
 export const updateVpsSchema = z.object({

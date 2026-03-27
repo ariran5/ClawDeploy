@@ -19,7 +19,6 @@ const form = ref({
   username: 'root',
   authMethod: 'password' as 'password' | 'key',
   credential: '',
-  provider: 'timeweb',
 });
 
 const createMutation = useMutation({
@@ -30,7 +29,7 @@ const createMutation = useMutation({
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ['vps'] });
     showForm.value = false;
-    form.value = { name: '', host: '', port: 22, username: 'root', authMethod: 'password', credential: '', provider: 'timeweb' };
+    form.value = { name: '', host: '', port: 22, username: 'root', authMethod: 'password', credential: '' };
   },
 });
 
@@ -64,18 +63,9 @@ const statusColors: Record<string, string> = {
     <div v-if="showForm" class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
       <h2 class="font-semibold mb-4">Add VPS Server</h2>
       <form @submit.prevent="createMutation.mutate()" class="space-y-4">
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Server Name</label>
-            <input v-model="form.name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none" placeholder="My Timeweb VPS" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Provider</label>
-            <select v-model="form.provider" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none">
-              <option value="timeweb">Timeweb</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Server Name</label>
+          <input v-model="form.name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none" placeholder="My VPS Server" />
         </div>
         <div class="grid grid-cols-3 gap-4">
           <div class="col-span-2">
@@ -150,7 +140,7 @@ const statusColors: Record<string, string> = {
           <div class="w-3 h-3 rounded-full" :class="statusColors[vps.status]" />
           <div>
             <RouterLink :to="`/vps/${vps.id}`" class="font-semibold hover:text-primary-600">{{ vps.name }}</RouterLink>
-            <p class="text-sm text-gray-500">{{ vps.host }}:{{ vps.port }} &middot; {{ vps.provider }}</p>
+            <p class="text-sm text-gray-500">{{ vps.host }}:{{ vps.port }}</p>
           </div>
         </div>
         <button

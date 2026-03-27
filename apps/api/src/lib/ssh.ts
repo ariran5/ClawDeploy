@@ -37,13 +37,15 @@ export function executeCommand(params: SshConnectionParams, command: string): Pr
       });
     });
 
-    conn.on('error', reject);
+    conn.on('error', (err) => {
+      reject(new Error(`SSH to ${params.host}:${params.port} failed: ${err.message}`));
+    });
 
     const connectConfig: Record<string, unknown> = {
       host: params.host,
       port: params.port,
       username: params.username,
-      readyTimeout: 10000,
+      readyTimeout: 30000,
     };
 
     if (params.authMethod === 'password') {
@@ -70,8 +72,7 @@ export async function uploadFile(
   remotePath: string,
   content: string,
 ): Promise<void> {
-  // Use echo with heredoc to write file content
-  const escaped = content.replace(/'/g, "'\\''");
+  // Use heredoc to write file content (single-quoted delimiter disables expansion)
   await executeCommand(params, `mkdir -p $(dirname ${remotePath}) && cat > ${remotePath} << 'OPENCLAW_EOF'\n${content}\nOPENCLAW_EOF`);
 }
 

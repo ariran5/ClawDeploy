@@ -38,10 +38,11 @@ export async function botsRoutes(app: FastifyInstance) {
     return { success: true, data: bot };
   });
 
-  // Delete bot
+  // Delete bot (with VPS cleanup)
   app.delete('/:botId', async (request, reply) => {
     const { botId } = request.params as { botId: string };
-    await botsService.deleteBot(request.user.userId, botId);
+    const { force } = request.query as { force?: string };
+    await botsService.deleteBot(request.user.userId, botId, force === 'true');
     return reply.status(204).send();
   });
 

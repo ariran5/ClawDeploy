@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { api } from '@/lib/api-client';
 import type { Bot, BotConfig } from '@openclaw/shared';
 
 const route = useRoute();
+const router = useRouter();
 const queryClient = useQueryClient();
 const botId = route.params.id as string;
 const activeTab = ref('overview');
+const showDeleteModal = ref(false);
+const deleteError = ref<string | null>(null);
 
 const { data: botData, isLoading } = useQuery({
   queryKey: ['bot', botId],
@@ -39,10 +42,40 @@ useQuery({
   },
 });
 
+const invalidateBot = () => queryClient.invalidateQueries({ queryKey: ['bot', botId] });
+
 const deployMutation = useMutation({
   mutationFn: () => api(`/bots/${botId}/deploy`, { method: 'POST', body: '{}' }),
-  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['bot', botId] }),
+  onSuccess: invalidateBot,
 });
+
+const startMutation = useMutation({
+  mutationFn: () => api(`/bots/${botId}/start`, { method: 'POST', body: '{}' }),
+  onSuccess: invalidateBot,
+});
+
+const stopMutation = useMutation({
+  mutationFn: () => api(`/bots/${botId}/stop`, { method: 'POST', body: '{}' }),
+  onSuccess: invalidateBot,
+});
+
+const restartMutation = useMutation({
+  mutationFn: () => api(`/bots/${botId}/restart`, { method: 'POST', body: '{}' }),
+  onSuccess: invalidateBot,
+});
+
+const deleteMutation = useMutation({
+  mutationFn: (force: boolean) => api(`/bots/${botId}${force ? '?force=true' : ''}`, { method: 'DELETE' }),
+  onSuccess: () => router.push('/bots'),
+  onError: (err: any) => {
+    deleteError.value = err?.message || 'Delete failed';
+  },
+});
+
+const anyActionPending = () =>
+  deployMutation.isPending.value || startMutation.isPending.value ||
+  stopMutation.isPending.value || restartMutation.isPending.value ||
+  deleteMutation.isPending.value;
 
 const saveAllowedUsersMutation = useMutation({
   mutationFn: () => {
@@ -94,12 +127,53 @@ const statusColors: Record<string, string> = {
           >
             {{ botData.data.status }}
           </span>
+
+          <!-- Start (only when stopped) -->
+          <button
+            v-if="botData.data.status === 'stopped'"
+            @click="startMutation.mutate()"
+            :disabled="anyActionPending()"
+            class="px-3 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50"
+          >
+            {{ startMutation.isPending.value ? 'Starting...' : 'Start' }}
+          </button>
+
+          <!-- Stop (only when running) -->
+          <button
+            v-if="botData.data.status === 'running'"
+            @click="stopMutation.mutate()"
+            :disabled="anyActionPending()"
+            class="px-3 py-2 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 disabled:opacity-50"
+          >
+            {{ stopMutation.isPending.value ? 'Stopping...' : 'Stop' }}
+          </button>
+
+          <!-- Restart (only when running) -->
+          <button
+            v-if="botData.data.status === 'running'"
+            @click="restartMutation.mutate()"
+            :disabled="anyActionPending()"
+            class="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+          >
+            {{ restartMutation.isPending.value ? 'Restarting...' : 'Restart' }}
+          </button>
+
+          <!-- Deploy -->
           <button
             @click="deployMutation.mutate()"
-            :disabled="deployMutation.isPending.value || botData.data.status === 'draft'"
-            class="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
+            :disabled="anyActionPending() || botData.data.status === 'draft'"
+            class="px-3 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
           >
-            Deploy
+            {{ deployMutation.isPending.value ? 'Deploying...' : botData.data.status === 'running' ? 'Redeploy' : 'Deploy' }}
+          </button>
+
+          <!-- Delete -->
+          <button
+            @click="showDeleteModal = true"
+            :disabled="anyActionPending()"
+            class="px-3 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
+          >
+            Delete
           </button>
         </div>
       </div>
@@ -255,5 +329,45 @@ const statusColors: Record<string, string> = {
         <p class="text-sm text-gray-500">Logs will appear here once the bot starts processing messages.</p>
       </div>
     </template>
+
+    <!-- Delete Confirmation Modal -->
+    <Teleport to="body">
+      <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center">
+        <div class="fixed inset-0 bg-black/50" @click="showDeleteModal = false" />
+        <div class="relative bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Delete Bot</h3>
+          <p class="text-sm text-gray-600 mb-4">
+            This will stop the bot, remove its container and files from the VPS, and delete all data from the database. This action cannot be undone.
+          </p>
+
+          <div v-if="deleteError" class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+            <p class="text-sm text-red-700">{{ deleteError }}</p>
+            <button
+              @click="deleteMutation.mutate(true)"
+              :disabled="deleteMutation.isPending.value"
+              class="mt-2 px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-medium hover:bg-red-700 disabled:opacity-50"
+            >
+              {{ deleteMutation.isPending.value ? 'Deleting...' : 'Force Delete (skip VPS cleanup)' }}
+            </button>
+          </div>
+
+          <div class="flex justify-end gap-3">
+            <button
+              @click="showDeleteModal = false; deleteError = null"
+              class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200"
+            >
+              Cancel
+            </button>
+            <button
+              @click="deleteMutation.mutate(false)"
+              :disabled="deleteMutation.isPending.value"
+              class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
+            >
+              {{ deleteMutation.isPending.value ? 'Deleting...' : 'Delete Bot' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>

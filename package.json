@@ -1,0 +1,20 @@
+{
+  "name": "openclaw-saas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OpenClaw Bot Management SaaS Platform",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "db:generate": "pnpm --filter @openclaw/api db:generate",
+    "db:migrate": "pnpm --filter @openclaw/api db:migrate",
+    "db:push": "pnpm --filter @openclaw/api db:push"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.0",
+    "typescript": "^5.7.0"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

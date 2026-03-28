@@ -1,4 +1,5 @@
 import { Client } from 'ssh2';
+import { SSH_TIMEOUT_MS } from '../config/constants.js';
 
 interface SshConnectionParams {
   host: string;
@@ -45,7 +46,7 @@ export function executeCommand(params: SshConnectionParams, command: string): Pr
       host: params.host,
       port: params.port,
       username: params.username,
-      readyTimeout: 30000,
+      readyTimeout: SSH_TIMEOUT_MS,
     };
 
     if (params.authMethod === 'password') {

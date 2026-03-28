@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../../db/index.js';
 import { subscriptions } from '../../db/schema/subscriptions.js';
-import { PLAN_LIMITS } from '../../config/constants.js';
+import { PLAN_LIMITS, DEFAULT_PLAN } from '../../config/constants.js';
 import type { Plan } from '@clawdeploy/shared';
 
 export async function getSubscription(userId: string) {
@@ -10,12 +10,12 @@ export async function getSubscription(userId: string) {
     .where(eq(subscriptions.userId, userId));
 
   if (!sub) {
-    // Create a free subscription if none exists
+    const limits = PLAN_LIMITS[DEFAULT_PLAN];
     const [newSub] = await db.insert(subscriptions).values({
       userId,
-      plan: 'free',
-      maxBots: PLAN_LIMITS.free.maxBots,
-      maxVpsServers: PLAN_LIMITS.free.maxVpsServers,
+      plan: DEFAULT_PLAN as Plan,
+      maxBots: limits.maxBots,
+      maxVpsServers: limits.maxVpsServers,
     }).returning();
     return newSub;
   }
@@ -25,6 +25,9 @@ export async function getSubscription(userId: string) {
 
 export async function changePlan(userId: string, plan: Plan) {
   const limits = PLAN_LIMITS[plan];
+  if (!limits) {
+    throw Object.assign(new Error(`Unknown plan: ${plan}`), { statusCode: 400 });
+  }
 
   const [sub] = await db.update(subscriptions)
     .set({

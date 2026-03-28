@@ -8,7 +8,7 @@ const navItems = [
   { path: '/bots', label: 'Bots', icon: '&#9881;' },
   { path: '/vps', label: 'VPS Servers', icon: '&#9729;' },
   { path: '/monitoring', label: 'Monitoring', icon: '&#9636;' },
-  { path: '/billing', label: 'Billing', icon: '&#9733;' },
+  { path: '/tariff', label: 'Tariff', icon: '&#9733;' },
   { path: '/settings', label: 'Settings', icon: '&#9881;' },
 ];
 

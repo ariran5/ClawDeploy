@@ -8,6 +8,7 @@ export interface Subscription {
   status: SubscriptionStatus;
   maxBots: number;
   maxVpsServers: number;
+  externalId: string | null;
   currentPeriodStart: string | null;
   currentPeriodEnd: string | null;
   createdAt: string;

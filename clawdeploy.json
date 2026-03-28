@@ -1,0 +1,20 @@
+{
+  "plans": {
+    "free": {
+      "maxBots": 1000,
+      "maxVpsServers": 100,
+      "price": 0
+    }
+  },
+  "defaultPlan": "free",
+  "deploy": {
+    "remoteDir": "/opt/clawdeploy",
+    "dockerImage": "ghcr.io/zeroclaw-labs/zeroclaw:latest",
+    "sshTimeoutMs": 30000,
+    "containerMemoryLimit": "128M",
+    "containerCpuLimit": "0.5"
+  },
+  "openrouter": {
+    "baseUrl": "https://openrouter.ai/api/v1"
+  }
+}

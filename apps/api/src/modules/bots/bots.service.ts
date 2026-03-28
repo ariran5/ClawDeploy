@@ -3,12 +3,12 @@ import { db } from '../../db/index.js';
 import { bots } from '../../db/schema/bots.js';
 import { botConfigs } from '../../db/schema/bot-configs.js';
 import { telegramConnections } from '../../db/schema/telegram-connections.js';
-import { subscriptions } from '../../db/schema/subscriptions.js';
 import { vpsServers } from '../../db/schema/vps-servers.js';
 import { encrypt, decrypt } from '../../lib/crypto.js';
 import { generateOpenclawConfig, generateConfigToml } from '../../lib/openclaw.js';
 import { executeCommand, uploadFile } from '../../lib/ssh.js';
-import { OPENCLAW_DEPLOY_DIR } from '../../config/constants.js';
+import { OPENCLAW_DEPLOY_DIR, DOCKER_IMAGE, CONTAINER_MEMORY_LIMIT, CONTAINER_CPU_LIMIT } from '../../config/constants.js';
+import { getSubscription } from '../billing/billing.service.js';
 import type { CreateBotInput, UpdateBotInput, BotConfigInput } from '@clawdeploy/shared';
 
 export async function listBots(userId: string, page = 1, limit = 20) {
@@ -34,16 +34,13 @@ export async function listBots(userId: string, page = 1, limit = 20) {
 
 export async function createBot(userId: string, input: CreateBotInput) {
   // Check plan limits
-  const [sub] = await db.select()
-    .from(subscriptions)
-    .where(eq(subscriptions.userId, userId));
-
+  const sub = await getSubscription(userId);
   const [{ count }] = await db.select({ count: sql<number>`count(*)::int` })
     .from(bots)
     .where(eq(bots.userId, userId));
 
-  if (sub && count >= sub.maxBots) {
-    throw Object.assign(new Error(`Bot limit reached (${sub.maxBots}). Upgrade your plan.`), { statusCode: 403 });
+  if (count >= sub.maxBots) {
+    throw Object.assign(new Error(`Bot limit reached (${sub.maxBots}).`), { statusCode: 403 });
   }
 
   const [bot] = await db.insert(bots).values({
@@ -288,7 +285,7 @@ export async function deployBot(userId: string, botId: string) {
     // --- Generate docker-compose.yml ---
     const compose = `services:
   openclaw:
-    image: ghcr.io/zeroclaw-labs/zeroclaw:latest
+    image: ${DOCKER_IMAGE}
     container_name: ${containerName}
     restart: unless-stopped
     command: ["daemon", "--host", "0.0.0.0"]
@@ -311,11 +308,8 @@ export async function deployBot(userId: string, botId: string) {
     deploy:
       resources:
         limits:
-          cpus: "0.5"
-          memory: 128M
-        reservations:
-          cpus: "0.5"
-          memory: 32M
+          cpus: "${CONTAINER_CPU_LIMIT}"
+          memory: ${CONTAINER_MEMORY_LIMIT}
 volumes:
   zeroclaw-data:
 `;

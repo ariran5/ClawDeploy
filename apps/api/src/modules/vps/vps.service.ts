@@ -1,9 +1,9 @@
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { db } from '../../db/index.js';
 import { vpsServers } from '../../db/schema/vps-servers.js';
-import { subscriptions } from '../../db/schema/subscriptions.js';
 import { encrypt, decrypt } from '../../lib/crypto.js';
 import { testConnection, getServerHealth } from '../../lib/ssh.js';
+import { getSubscription } from '../billing/billing.service.js';
 import type { CreateVpsInput, UpdateVpsInput } from '@clawdeploy/shared';
 
 export async function listVps(userId: string) {
@@ -27,16 +27,13 @@ export async function listVps(userId: string) {
 }
 
 export async function createVps(userId: string, input: CreateVpsInput) {
-  const [sub] = await db.select()
-    .from(subscriptions)
-    .where(eq(subscriptions.userId, userId));
-
+  const sub = await getSubscription(userId);
   const [{ count }] = await db.select({ count: sql<number>`count(*)::int` })
     .from(vpsServers)
     .where(eq(vpsServers.userId, userId));
 
-  if (sub && count >= sub.maxVpsServers) {
-    throw Object.assign(new Error(`VPS limit reached (${sub.maxVpsServers}). Upgrade your plan.`), { statusCode: 403 });
+  if (count >= sub.maxVpsServers) {
+    throw Object.assign(new Error(`VPS limit reached (${sub.maxVpsServers}).`), { statusCode: 403 });
   }
 
   const encryptedCredential = encrypt(input.credential);

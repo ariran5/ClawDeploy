@@ -50,7 +50,7 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/billing',
+      path: '/tariff',
       component: () => import('@/pages/billing/BillingPage.vue'),
       meta: { requiresAuth: true },
     },

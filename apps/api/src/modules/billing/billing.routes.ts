@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import * as billingService from './billing.service.js';
-import type { Plan } from '@openclaw/shared';
+import type { Plan } from '@clawdeploy/shared';
 
 export async function billingRoutes(app: FastifyInstance) {
   app.addHook('preHandler', app.authenticate);

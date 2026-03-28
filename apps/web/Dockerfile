@@ -14,8 +14,8 @@ COPY --from=deps /app/ ./
 COPY . .
 ARG VITE_API_URL=/api
 ENV VITE_API_URL=${VITE_API_URL}
-RUN pnpm --filter @openclaw/shared build
-RUN pnpm --filter @openclaw/web build
+RUN pnpm --filter @clawdeploy/shared build
+RUN pnpm --filter @clawdeploy/web build
 
 FROM nginx:alpine AS runner
 COPY --from=builder /app/apps/web/dist /usr/share/nginx/html

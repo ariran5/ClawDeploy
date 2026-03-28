@@ -1,16 +1,16 @@
 {
-  "name": "openclaw-saas",
+  "name": "clawdeploy",
   "version": "1.0.0",
   "private": true,
-  "description": "OpenClaw Bot Management SaaS Platform",
+  "description": "ClawDeploy — AI Bot Deployment Platform",
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
     "test": "turbo test",
-    "db:generate": "pnpm --filter @openclaw/api db:generate",
-    "db:migrate": "pnpm --filter @openclaw/api db:migrate",
-    "db:push": "pnpm --filter @openclaw/api db:push"
+    "db:generate": "pnpm --filter @clawdeploy/api db:generate",
+    "db:migrate": "pnpm --filter @clawdeploy/api db:migrate",
+    "db:push": "pnpm --filter @clawdeploy/api db:push"
   },
   "devDependencies": {
     "turbo": "^2.4.0",

@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { registerSchema, loginSchema, changePasswordSchema, updateProfileSchema } from '@openclaw/shared';
+import { registerSchema, loginSchema, changePasswordSchema, updateProfileSchema } from '@clawdeploy/shared';
 import { registerUser, loginUser, getUserById, updateUser, changePassword } from './auth.service.js';
 import { env } from '../../config/env.js';
 import { createSigner, createVerifier } from 'fast-jwt';

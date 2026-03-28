@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query';
 import { api } from '@/lib/api-client';
-import type { Bot } from '@openclaw/shared';
+import type { Bot } from '@clawdeploy/shared';
 
 const { data, isLoading } = useQuery({
   queryKey: ['bots'],

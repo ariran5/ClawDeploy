@@ -4,7 +4,7 @@ import { vpsServers } from '../../db/schema/vps-servers.js';
 import { subscriptions } from '../../db/schema/subscriptions.js';
 import { encrypt, decrypt } from '../../lib/crypto.js';
 import { testConnection, getServerHealth } from '../../lib/ssh.js';
-import type { CreateVpsInput, UpdateVpsInput } from '@openclaw/shared';
+import type { CreateVpsInput, UpdateVpsInput } from '@clawdeploy/shared';
 
 export async function listVps(userId: string) {
   return db.select({

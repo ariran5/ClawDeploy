@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '../../db/index.js';
 import { subscriptions } from '../../db/schema/subscriptions.js';
 import { PLAN_LIMITS } from '../../config/constants.js';
-import type { Plan } from '@openclaw/shared';
+import type { Plan } from '@clawdeploy/shared';
 
 export async function getSubscription(userId: string) {
   const [sub] = await db.select()

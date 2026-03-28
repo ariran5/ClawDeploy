@@ -1,18 +1,16 @@
-version: "3.8"
-
 services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: openclaw
-      POSTGRES_USER: openclaw
-      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: ${DB_NAME:-clawdeploy}
+      POSTGRES_USER: ${DB_USER:-clawdeploy}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-dev_password}
     ports:
       - "5432:5432"
     volumes:
       - postgres_dev:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U openclaw"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-clawdeploy}"]
       interval: 5s
       timeout: 5s
       retries: 5

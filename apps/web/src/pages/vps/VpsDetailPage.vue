@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import { api } from '@/lib/api-client';
-import type { VpsServer, VpsHealth } from '@openclaw/shared';
+import type { VpsServer, VpsHealth } from '@clawdeploy/shared';
 
 const route = useRoute();
 const vpsId = route.params.id as string;

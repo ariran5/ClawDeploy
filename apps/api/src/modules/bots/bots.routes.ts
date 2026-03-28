@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { createBotSchema, updateBotSchema, botConfigSchema } from '@openclaw/shared';
+import { createBotSchema, updateBotSchema, botConfigSchema } from '@clawdeploy/shared';
 import * as botsService from './bots.service.js';
 
 export async function botsRoutes(app: FastifyInstance) {

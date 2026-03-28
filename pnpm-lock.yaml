@@ -17,6 +17,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@clawdeploy/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@fastify/cors':
         specifier: ^10.0.0
         version: 10.1.0
@@ -26,9 +29,6 @@ importers:
       '@fastify/rate-limit':
         specifier: ^10.0.0
         version: 10.3.0
-      '@openclaw/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
       argon2:
         specifier: ^0.41.0
         version: 0.41.1
@@ -81,7 +81,7 @@ importers:
 
   apps/web:
     dependencies:
-      '@openclaw/shared':
+      '@clawdeploy/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       '@tanstack/vue-query':

@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/shared",
+  "name": "@clawdeploy/shared",
   "version": "1.0.0",
   "private": true,
   "main": "./dist/index.js",

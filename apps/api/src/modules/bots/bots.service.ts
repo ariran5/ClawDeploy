@@ -9,7 +9,7 @@ import { encrypt, decrypt } from '../../lib/crypto.js';
 import { generateOpenclawConfig, generateConfigToml } from '../../lib/openclaw.js';
 import { executeCommand, uploadFile } from '../../lib/ssh.js';
 import { OPENCLAW_DEPLOY_DIR } from '../../config/constants.js';
-import type { CreateBotInput, UpdateBotInput, BotConfigInput } from '@openclaw/shared';
+import type { CreateBotInput, UpdateBotInput, BotConfigInput } from '@clawdeploy/shared';
 
 export async function listBots(userId: string, page = 1, limit = 20) {
   const offset = (page - 1) * limit;

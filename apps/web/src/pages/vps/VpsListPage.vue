@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { api } from '@/lib/api-client';
-import type { VpsServer } from '@openclaw/shared';
+import type { VpsServer } from '@clawdeploy/shared';
 
 const queryClient = useQueryClient();
 const showForm = ref(false);

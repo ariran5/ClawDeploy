@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { createVpsSchema, updateVpsSchema } from '@openclaw/shared';
+import { createVpsSchema, updateVpsSchema } from '@clawdeploy/shared';
 import * as vpsService from './vps.service.js';
 
 export async function vpsRoutes(app: FastifyInstance) {

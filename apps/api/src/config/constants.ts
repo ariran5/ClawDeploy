@@ -7,4 +7,4 @@ export const PLAN_LIMITS = {
 
 export const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
 
-export const OPENCLAW_DEPLOY_DIR = '/opt/openclaw';
+export const OPENCLAW_DEPLOY_DIR = '/opt/clawdeploy';

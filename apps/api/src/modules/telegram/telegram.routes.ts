@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { telegramTokenSchema } from '@openclaw/shared';
+import { telegramTokenSchema } from '@clawdeploy/shared';
 import * as telegramService from './telegram.service.js';
 import * as botsService from '../bots/bots.service.js';
 

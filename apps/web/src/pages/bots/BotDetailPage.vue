@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { api } from '@/lib/api-client';
-import type { Bot, BotConfig } from '@openclaw/shared';
+import type { Bot, BotConfig } from '@clawdeploy/shared';
 
 const route = useRoute();
 const router = useRouter();
@@ -224,9 +224,9 @@ const statusColors: Record<string, string> = {
           <p class="text-sm text-red-600 mt-1">{{ botData.data.lastError }}</p>
         </div>
 
-        <!-- OpenClaw Config Preview -->
+        <!-- ClawDeploy Config Preview -->
         <div v-if="botData.data.openclawConfig" class="bg-white rounded-xl border border-gray-200 p-6">
-          <h3 class="font-semibold mb-4">openclaw.json</h3>
+          <h3 class="font-semibold mb-4">Bot Config</h3>
           <pre class="bg-gray-900 text-green-400 p-4 rounded-lg text-sm overflow-auto">{{ JSON.stringify(botData.data.openclawConfig, null, 2) }}</pre>
         </div>
       </div>

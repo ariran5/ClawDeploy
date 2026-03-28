@@ -22,7 +22,7 @@ function isActive(path: string) {
   <aside class="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 flex flex-col">
     <div class="p-6 border-b border-gray-200">
       <RouterLink to="/" class="text-xl font-bold text-primary-600">
-        OpenClaw
+        ClawDeploy
       </RouterLink>
     </div>
 

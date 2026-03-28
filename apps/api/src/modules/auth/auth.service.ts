@@ -3,7 +3,7 @@ import { hash, verify } from 'argon2';
 import { db } from '../../db/index.js';
 import { users } from '../../db/schema/users.js';
 import { subscriptions } from '../../db/schema/subscriptions.js';
-import type { RegisterInput, LoginInput } from '@openclaw/shared';
+import type { RegisterInput, LoginInput } from '@clawdeploy/shared';
 
 export async function registerUser(input: RegisterInput) {
   const existing = await db.select({ id: users.id })

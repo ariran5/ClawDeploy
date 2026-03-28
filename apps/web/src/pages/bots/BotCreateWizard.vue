@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { api } from '@/lib/api-client';
-import type { VpsServer } from '@openclaw/shared';
+import type { VpsServer } from '@clawdeploy/shared';
 
 const router = useRouter();
 const queryClient = useQueryClient();
@@ -157,7 +157,7 @@ const canProceed = computed(() => {
       <!-- Step 1: VPS -->
       <div v-if="currentStep === 1" class="space-y-4">
         <h2 class="text-lg font-semibold">Select VPS Server</h2>
-        <p class="text-sm text-gray-500">Choose where to deploy your OpenClaw bot.</p>
+        <p class="text-sm text-gray-500">Choose where to deploy your ClawDeploy bot.</p>
 
         <div v-if="vpsList?.data?.length" class="space-y-2">
           <label

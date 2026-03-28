@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { api, setTokens, clearTokens, getAccessToken } from '@/lib/api-client';
-import type { User, LoginResponse } from '@openclaw/shared';
+import type { User, LoginResponse } from '@clawdeploy/shared';
 
 const currentUser = ref<User | null>(null);
 const loading = ref(false);

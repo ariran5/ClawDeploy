@@ -12,9 +12,9 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/ ./
 COPY . .
-RUN pnpm --filter @openclaw/shared build
-RUN pnpm --filter @openclaw/api build
-RUN pnpm --filter @openclaw/api deploy --prod /prod/api
+RUN pnpm --filter @clawdeploy/shared build
+RUN pnpm --filter @clawdeploy/api build
+RUN pnpm --filter @clawdeploy/api deploy --prod /prod/api
 
 FROM node:22-alpine AS runner
 WORKDIR /app

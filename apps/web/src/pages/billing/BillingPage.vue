@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { api } from '@/lib/api-client';
-import type { Subscription, Plan } from '@openclaw/shared';
+import type { Subscription, Plan } from '@clawdeploy/shared';
 
 const queryClient = useQueryClient();
 

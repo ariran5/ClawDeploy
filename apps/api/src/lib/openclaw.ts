@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from '@openclaw/shared';
+import type { OpenClawConfig } from '@clawdeploy/shared';
 
 export interface GenerateConfigParams {
   openrouterKey: string;

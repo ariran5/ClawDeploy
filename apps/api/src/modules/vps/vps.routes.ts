@@ -41,6 +41,13 @@ export async function vpsRoutes(app: FastifyInstance) {
     return { success: true, data: result };
   });
 
+  // Sync VPS status (checks SSH connectivity)
+  app.get('/:vpsId/sync', async (request) => {
+    const { vpsId } = request.params as { vpsId: string };
+    const result = await vpsService.syncVpsStatus(request.user.userId, vpsId);
+    return { success: true, data: result };
+  });
+
   app.get('/:vpsId/health', async (request) => {
     const { vpsId } = request.params as { vpsId: string };
     const health = await vpsService.getVpsHealth(request.user.userId, vpsId);

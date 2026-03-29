@@ -406,14 +406,49 @@ export async function restartBot(userId: string, botId: string) {
   return { status: 'running' };
 }
 
-export async function getBotStatus(userId: string, botId: string) {
+export async function syncBotStatus(userId: string, botId: string) {
   const bot = await getBot(userId, botId);
-  const ssh = await getVpsConnection(bot);
-  const deployDir = `${OPENCLAW_DEPLOY_DIR}/${botId}`;
 
-  const result = await executeCommand(ssh, `cd ${deployDir} && docker compose ps --format json 2>&1`);
+  // draft/configured bots have no VPS to check
+  if (!bot.vpsId || bot.status === 'draft' || bot.status === 'configured') {
+    return bot;
+  }
 
-  return { dbStatus: bot.status, containers: result.stdout.trim() };
+  try {
+    const ssh = await getVpsConnection(bot);
+    const deployDir = `${OPENCLAW_DEPLOY_DIR}/${botId}`;
+
+    const result = await executeCommand(ssh, `cd ${deployDir} && docker compose ps --format '{{.State}}' 2>&1`);
+    const state = result.stdout.trim().toLowerCase();
+
+    let newStatus: string;
+    if (result.code !== 0 || !state) {
+      newStatus = 'stopped';
+    } else if (state.includes('running')) {
+      newStatus = 'running';
+    } else if (state.includes('exited') || state.includes('dead')) {
+      newStatus = 'stopped';
+    } else {
+      newStatus = 'error';
+    }
+
+    if (newStatus !== bot.status) {
+      await db.update(bots)
+        .set({ status: newStatus as any, isActive: newStatus === 'running', updatedAt: new Date() })
+        .where(eq(bots.id, botId));
+    }
+
+    return { ...bot, status: newStatus, isActive: newStatus === 'running' };
+  } catch {
+    // VPS unreachable — mark as error if it was supposed to be running
+    if (bot.status === 'running') {
+      await db.update(bots)
+        .set({ status: 'error', lastError: 'VPS unreachable', updatedAt: new Date() })
+        .where(eq(bots.id, botId));
+      return { ...bot, status: 'error', lastError: 'VPS unreachable' };
+    }
+    return bot;
+  }
 }
 
 export async function getBotLogs(userId: string, botId: string, lines = 100) {

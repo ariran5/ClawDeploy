@@ -89,10 +89,10 @@ export async function botsRoutes(app: FastifyInstance) {
     return { success: true, data: result };
   });
 
-  // Get bot status from VPS
-  app.get('/:botId/status', async (request) => {
+  // Sync bot status from VPS (checks actual container state)
+  app.get('/:botId/sync', async (request) => {
     const { botId } = request.params as { botId: string };
-    const result = await botsService.getBotStatus(request.user.userId, botId);
+    const result = await botsService.syncBotStatus(request.user.userId, botId);
     return { success: true, data: result };
   });
 

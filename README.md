@@ -4,6 +4,8 @@ Open-source platform for deploying and managing AI bots powered by [ZeroClaw](ht
 
 Deploy Telegram bots with any LLM model (Claude, GPT, DeepSeek, Llama, etc.) to your own VPS servers. Manage everything from a web dashboard.
 
+![Create Bot Wizard](docs/create-bot-wizard.png)
+
 ## Pricing
 
 **Self-hosted (free forever):**

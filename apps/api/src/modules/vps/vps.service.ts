@@ -127,3 +127,31 @@ export async function getVpsHealth(userId: string, vpsId: string) {
 
   return health;
 }
+
+export async function syncVpsStatus(userId: string, vpsId: string) {
+  const vps = await getVps(userId, vpsId);
+  const credential = decrypt(vps.encryptedCredential);
+
+  try {
+    const ok = await testConnection({
+      host: vps.host,
+      port: vps.port,
+      username: vps.username,
+      authMethod: vps.authMethod as 'password' | 'key',
+      credential,
+    });
+
+    const newStatus = ok ? 'active' : 'unreachable';
+    await db.update(vpsServers)
+      .set({ status: newStatus, lastHealthCheck: new Date(), updatedAt: new Date() })
+      .where(eq(vpsServers.id, vpsId));
+
+    return { ...vps, status: newStatus, lastHealthCheck: new Date() };
+  } catch {
+    await db.update(vpsServers)
+      .set({ status: 'unreachable', lastHealthCheck: new Date(), updatedAt: new Date() })
+      .where(eq(vpsServers.id, vpsId));
+
+    return { ...vps, status: 'unreachable', lastHealthCheck: new Date() };
+  }
+}

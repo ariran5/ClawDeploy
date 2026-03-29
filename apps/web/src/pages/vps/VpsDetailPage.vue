@@ -1,15 +1,27 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
-import { useQuery } from '@tanstack/vue-query';
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { api } from '@/lib/api-client';
 import type { VpsServer, VpsHealth } from '@clawdeploy/shared';
 
 const route = useRoute();
+const queryClient = useQueryClient();
 const vpsId = route.params.id as string;
 
 const { data: vpsData, isLoading } = useQuery({
   queryKey: ['vps', vpsId],
   queryFn: () => api<{ success: boolean; data: VpsServer }>(`/vps/${vpsId}`),
+});
+
+// Sync actual status via SSH on page load
+useQuery({
+  queryKey: ['vps-sync', vpsId],
+  queryFn: async () => {
+    const res = await api<{ success: boolean; data: VpsServer }>(`/vps/${vpsId}/sync`);
+    queryClient.setQueryData(['vps', vpsId], res);
+    return res;
+  },
+  staleTime: 0,
 });
 
 const { data: healthData } = useQuery({

@@ -18,6 +18,17 @@ const { data: botData, isLoading } = useQuery({
   queryFn: () => api<{ success: boolean; data: Bot }>(`/bots/${botId}`),
 });
 
+// Sync actual status from VPS on page load
+useQuery({
+  queryKey: ['bot-sync', botId],
+  queryFn: async () => {
+    const res = await api<{ success: boolean; data: Bot }>(`/bots/${botId}/sync`);
+    queryClient.setQueryData(['bot', botId], res);
+    return res;
+  },
+  staleTime: 0,
+});
+
 const { data: configData } = useQuery({
   queryKey: ['bot-config', botId],
   queryFn: () => api<{ success: boolean; data: BotConfig | null }>(`/bots/${botId}/config`),

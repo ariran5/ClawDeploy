@@ -20,6 +20,16 @@ export async function getSubscription(userId: string) {
     return newSub;
   }
 
+  // Sync limits from config if they changed
+  const limits = PLAN_LIMITS[sub.plan];
+  if (limits && (sub.maxBots !== limits.maxBots || sub.maxVpsServers !== limits.maxVpsServers)) {
+    const [updated] = await db.update(subscriptions)
+      .set({ maxBots: limits.maxBots, maxVpsServers: limits.maxVpsServers, updatedAt: new Date() })
+      .where(eq(subscriptions.userId, userId))
+      .returning();
+    return updated;
+  }
+
   return sub;
 }
 
